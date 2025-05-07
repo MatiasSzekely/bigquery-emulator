@@ -5,7 +5,9 @@ import (
 	"context"
 	"errors"
 	"os"
+	"io"
 
+	"github.com/goccy/go-json"
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/bigquery-emulator/types"
 	"github.com/goccy/go-yaml"
@@ -31,6 +33,33 @@ func YAMLSource(path string) Source {
 		}
 		if err := dec.Decode(&v); err != nil {
 			return errors.New(yaml.FormatError(err, false, true))
+		}
+		return s.addProjects(context.Background(), v.Projects)
+	}
+}
+
+func JSONSource(path string) Source {
+	return func(s *Server) error {
+		jsonFile, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+
+		content, err := io.ReadAll(jsonFile)
+		if err != nil {
+			return err
+		}
+
+		err = jsonFile.Close()
+		if err != nil {
+			return err
+		}
+
+		var v struct {
+			Projects []*types.Project `json:"projects"`
+		}
+		if err := json.Unmarshal([]byte(content), &v); err != nil {
+			return err
 		}
 		return s.addProjects(context.Background(), v.Projects)
 	}
