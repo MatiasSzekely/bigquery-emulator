@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"os"
 	"io"
+	"os"
 
-	"github.com/goccy/go-json"
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/bigquery-emulator/types"
+	"github.com/goccy/go-json"
 	"github.com/goccy/go-yaml"
 )
 
@@ -58,7 +58,9 @@ func JSONSource(path string) Source {
 		var v struct {
 			Projects []*types.Project `json:"projects"`
 		}
-		if err := json.Unmarshal([]byte(content), &v); err != nil {
+		dec := json.NewDecoder(bytes.NewReader(content))
+		dec.UseNumber()
+		if err := dec.Decode(&v); err != nil {
 			return err
 		}
 		return s.addProjects(context.Background(), v.Projects)
