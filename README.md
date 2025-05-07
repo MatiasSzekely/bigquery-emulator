@@ -93,6 +93,7 @@ Application Options:
       --log-format=     specify the log format (console/json) (default: console)
       --database=       specify the database file if required. if not specified, it will be on memory
       --data-from-yaml= specify the path to the YAML file that contains the initial data
+      --data-from-json= specify the path to the JSON file that contains the initial data (faster for large datasets)
   -v, --version         print version
 
 Help Options:
