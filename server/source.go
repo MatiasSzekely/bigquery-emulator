@@ -58,9 +58,7 @@ func JSONSource(path string) Source {
 		var v struct {
 			Projects []*types.Project `json:"projects"`
 		}
-		dec := json.NewDecoder(bytes.NewReader(content))
-		dec.UseNumber()
-		if err := dec.Decode(&v); err != nil {
+		if err := json.Unmarshal([]byte(content), &v); err != nil {
 			return err
 		}
 		return s.addProjects(context.Background(), v.Projects)
